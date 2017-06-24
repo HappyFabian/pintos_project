@@ -53,6 +53,14 @@ void sys_close(int fd);
 int sys_read(int fd, void *buffer, unsigned size);
 int sys_write(int fd, const void *buffer, unsigned size);
 
+int sys_fec(int a, int b);
+int sys_seminst(int howmanytostart);
+int sys_seminit(int location, int value);
+int sys_semup(int location);
+
+int sys_createthread(const char *name, thread_func * a);
+void sys_threadstart(void);
+
 #ifdef VM
 mmapid_t sys_mmap(int fd, void *);
 bool sys_munmap(mmapid_t);
@@ -266,6 +274,48 @@ syscall_handler (struct intr_frame *f)
       f->eax = sys_mine(info, thread_id);
       break;
     }
+  
+  case SYS_FEC:
+  {
+    int a;
+    int b;
+    memread_user(f->esp + 4, &a, sizeof(a)); 
+    memread_user(f->esp + 8, &b, sizeof(b));
+
+    f->eax = sys_fec(a,b);
+    break;
+  }
+  case SYS_SEMINST:
+  {
+    int HowManyToStart;
+    memread_user(f->esp + 4, &HowManyToStart, sizeof(HowManyToStart));
+
+    f->eax = sys_seminst(HowManyToStart);
+    break;
+  }
+  case SYS_SEMINIT:
+  {
+    int location;
+    int value;
+    memread_user(f->esp + 4, &location, sizeof(location));
+    memread_user(f->esp + 8, &value, sizeof(value));
+    f->eax = sys_seminit(location,value);
+    break;
+  }
+  case SYS_SEMUP:
+  {
+    int location;
+    memread_user(f->esp + 4, &location, sizeof(location));
+    f->eax = sys_semup(location);
+    break;
+  }
+  case SYS_SEMDOWN:
+  {
+    int location;
+    memread_user(f->esp + 4, &location, sizeof(location));
+    f->eax = sys_semdown(location);
+    break;
+  }
 
 #ifdef VM
   case SYS_MMAP: // 13
@@ -351,8 +401,6 @@ syscall_handler (struct intr_frame *f)
     }
 
 #endif
-
-
   /* unhandled case */
   default:
     printf("[ERROR] system call %d is unimplemented!\n", syscall_number);
@@ -375,6 +423,34 @@ bool sys_mine(struct t_info * info, pid_t thread_id) {
   get_thread(info, thread_id);
   intr_set_level (oldlevel);
   return true;
+}
+
+int sys_fec(int a, int b){
+  int total = a + b;
+  printf("Fabian E. Canizales says: %d + %d = %d \n",a,b,total);
+  return total;
+}
+
+static struct semaphore * semaphores;
+int sys_seminst(int HowManyToStart){
+  int value = HowManyToStart * sizeof(struct semaphore);
+  semaphores = malloc(value);
+  return value;
+}
+
+int sys_seminit(int location, int value){
+  sema_init(&semaphores[location],value);
+  return 0;
+}
+
+int sys_semup(int location){
+  sema_up(&semaphores[location]);
+  return 0;
+}
+
+int sys_semdown(int location){
+  sema_down(&semaphores[location]);
+  return 0;
 }
 
 void sys_halt(void) {

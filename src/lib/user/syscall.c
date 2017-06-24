@@ -188,3 +188,29 @@ inumber (int fd)
 {
   return syscall1 (SYS_INUMBER, fd);
 }
+
+int 
+fec(int a, int b)
+{
+ return syscall2(SYS_FEC, a, b);
+}
+
+int
+seminst(int howmanytostart){
+  return syscall1(SYS_SEMINST, howmanytostart);
+}
+
+int 
+seminit(int location, int value){
+  return syscall2(SYS_SEMINIT,location,value);
+}
+
+int
+semup(int location){
+  return syscall1(SYS_SEMUP,location);
+}
+int
+semdown(int location)
+{
+  return syscall1(SYS_SEMDOWN,location);
+}

@@ -29,7 +29,14 @@ enum
     SYS_READDIR,                /* Reads a directory entry. */
     SYS_ISDIR,                  /* Tests if a fd represents a directory. */
     SYS_INUMBER,                /* Returns the inode number for a fd. */
-    SYS_MINE                    /* My sys_call */
+    SYS_MINE,                   /* My sys_call */
+    SYS_FEC,                     /* Fabian E. Canizales*/
+    SYS_SEMINST,               /*SEM Init*/
+    SYS_SEMINIT,
+    SYS_SEMUP,
+    SYS_SEMDOWN,
+  
+
   };
 
 #endif /* lib/syscall-nr.h */

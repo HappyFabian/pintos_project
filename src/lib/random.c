@@ -81,3 +81,11 @@ random_ulong (void)
   random_bytes (&ul, sizeof ul);
   return ul;
 }
+
+int
+random_int(void)
+{
+  int ul;
+  random_bytes(&ul, sizeof(ul));
+  return ul;
+}

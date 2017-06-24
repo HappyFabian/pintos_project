@@ -12,6 +12,10 @@ typedef int pid_t;
 typedef int mapid_t;
 #define MAP_FAILED ((mapid_t) -1)
 
+
+/*thread*/
+typedef void thread_func (void *aux);
+
 /* Maximum characters in a filename written by readdir(). */
 #define READDIR_MAX_LEN 14
 
@@ -45,5 +49,11 @@ bool mkdir (const char *dir);
 bool readdir (int fd, char name[READDIR_MAX_LEN + 1]);
 bool isdir (int fd);
 int inumber (int fd);
+
+int fec(int a, int b);
+int seminst(int howmanytostart);
+int seminit(int location, int value);
+int semup(int location);
+int semdown(int location);
 
 #endif /* lib/user/syscall.h */
