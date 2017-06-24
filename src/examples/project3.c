@@ -13,13 +13,16 @@ main(void)
     */
 
     seminst(2);
+    //RW
     seminit(0,1);
-    seminit(1,0);
+    //MUTEX
+    seminit(1,1);
 
     int pid[3];
-    pid[0] = exec("reader 1");
+    pid[0] = exec("writer 1");
     pid[1] = exec("reader 2");
-    pid[2] = exec("writer 3");
+    pid[2] = exec("reader 3");
+    
     
 
     wait(pid[0]);
