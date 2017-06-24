@@ -35,7 +35,11 @@ enum
     SYS_SEMINIT,
     SYS_SEMUP,
     SYS_SEMDOWN,
-  
+    FEC_LOCKINST,
+    FEC_LOCKINIT,
+    FEC_LOCKGET,
+    FEC_LOCKUP,
+    FEC_LOCKDOWN
 
   };
 

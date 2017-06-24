@@ -214,3 +214,34 @@ semdown(int location)
 {
   return syscall1(SYS_SEMDOWN,location);
 }
+
+
+int
+lockinst(int howmany)
+{
+  return syscall1(FEC_LOCKINST,howmany);
+}
+
+int
+lockinit(int location, int state)
+{
+  return syscall2(FEC_LOCKINIT,location,state);
+}
+
+int 
+lockget(int location)
+{
+  return syscall1(FEC_LOCKGET, location);
+}
+
+int
+lockup(int location)
+{
+  return syscall1(FEC_LOCKUP, location);
+}
+
+int
+lockdown(int location)
+{
+  return syscall1(FEC_LOCKDOWN, location);
+}

@@ -56,4 +56,11 @@ int seminit(int location, int value);
 int semup(int location);
 int semdown(int location);
 
+int lockinst(int howmany);
+int lockinit(int location, int state);
+int lockget(int location);
+int lockup(int location);
+int lockdown(int location);
+
+
 #endif /* lib/user/syscall.h */

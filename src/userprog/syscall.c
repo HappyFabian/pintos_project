@@ -58,8 +58,12 @@ int sys_seminst(int howmanytostart);
 int sys_seminit(int location, int value);
 int sys_semup(int location);
 
-int sys_createthread(const char *name, thread_func * a);
-void sys_threadstart(void);
+int fec_lockup(int location);
+int fec_lockdown(int location);
+int fec_lockinit(int location, int state);
+int fec_lockinst(int howmany);
+int fec_lockget(int location);
+
 
 #ifdef VM
 mmapid_t sys_mmap(int fd, void *);
@@ -316,6 +320,43 @@ syscall_handler (struct intr_frame *f)
     f->eax = sys_semdown(location);
     break;
   }
+  case FEC_LOCKINST:
+  {
+    int howmany;
+    memread_user(f->esp + 4,&howmany, sizeof(howmany));
+    f->eax = fec_lockinst(howmany);
+    break;
+  }
+  case FEC_LOCKINIT:
+  {
+    int location;
+    int state;
+    memread_user(f->esp +4, &location, sizeof(location));
+    memread_user(f->esp +8, &state, sizeof(state));
+    f->eax = fec_lockinit(location, state);
+    break;
+  }
+  case FEC_LOCKGET:
+  {
+    int location;
+    memread_user(f->esp +4, &location, sizeof(location));
+    f->eax = fec_lockget(location);
+    break;
+  }
+  case FEC_LOCKUP:
+  {
+    int location;
+    memread_user(f->esp +4, &location, sizeof(location));
+    f->eax = fec_lockup(location);
+    break;
+  }
+  case FEC_LOCKDOWN:
+  {
+    int location;
+    memread_user(f->esp +4, &location, sizeof(location));
+    f->eax = fec_lockdown(location);
+    break;
+  }
 
 #ifdef VM
   case SYS_MMAP: // 13
@@ -452,6 +493,36 @@ int sys_semdown(int location){
   sema_down(&semaphores[location]);
   return 0;
 }
+
+static int * locks;
+int fec_lockinst(int howmany){
+  int value = howmany * sizeof(int);
+  locks = malloc(locks);
+  return sizeof(locks);
+}
+
+int fec_lockinit(int location, int state){
+    locks[location] = state;
+    return 0;
+}
+
+int fec_lockget(int location)
+{
+  return locks[location];
+}
+
+int fec_lockup(int location)
+{
+  locks[location] = 1;
+  return 0;
+}
+
+int fec_lockdown(int location)
+{
+  locks[location] = 0;
+  return 0;
+}
+
 
 void sys_halt(void) {
   shutdown_power_off();
